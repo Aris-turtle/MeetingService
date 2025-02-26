@@ -5,13 +5,15 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Calendar;
+
 @Entity(name = "votes")
 @Setter
 @Getter
 @ToString
 public class Vote {
     @Id
-    @Column(name = "id")
+    @Column(name = "vote_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
@@ -23,5 +25,6 @@ public class Vote {
     private String voterTgUsername;
 
     @Column(name = "marked_date")
-    private long markedDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Calendar markedDate;
 }

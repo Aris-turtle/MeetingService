@@ -7,7 +7,6 @@ import com.aristurtle.megakalservice.model.Voting;
 import com.aristurtle.megakalservice.service.VotingService;
 import com.aristurtle.megakalservice.util.VotingErrorResponse;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +25,7 @@ public class VotingController {
     private final VotingService votingService;
     private final ModelMapper modelMapper;
 
+    @Autowired
     public VotingController(VotingService votingService, ModelMapper modelMapper) {
         this.votingService = votingService;
         this.modelMapper = modelMapper;
@@ -57,7 +57,6 @@ public class VotingController {
         final VotingDTO votingDTO = convertToVotingDTO(voting.get());
         return ResponseEntity.ok(votingDTO);
     }
-
 
     private void examineException(BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

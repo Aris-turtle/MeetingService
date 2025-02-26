@@ -2,8 +2,6 @@ package com.aristurtle.megakalservice.service;
 
 import com.aristurtle.megakalservice.model.Voting;
 import com.aristurtle.megakalservice.repository.VotingRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

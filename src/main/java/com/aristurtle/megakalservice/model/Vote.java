@@ -1,5 +1,7 @@
 package com.aristurtle.megakalservice.model;
 
+import com.aristurtle.megakalservice.dto.util.Views;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,9 +24,11 @@ public class Vote {
     private Voting voting;
 
     @Column(name = "voter_tg_username")
+    @JsonView(Views.GetById.class)
     private String voterTgUsername;
 
     @Column(name = "marked_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonView(Views.GetById.class)
     private Calendar markedDate;
 }

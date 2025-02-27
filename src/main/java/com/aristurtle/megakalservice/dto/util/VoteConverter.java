@@ -1,4 +1,4 @@
-package com.aristurtle.megakalservice.util;
+package com.aristurtle.megakalservice.dto.util;
 
 import com.aristurtle.megakalservice.dto.VoteDTO;
 import com.aristurtle.megakalservice.model.Vote;

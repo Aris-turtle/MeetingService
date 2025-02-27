@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.aristurtle.megakalservice.util.VoteConverter.convertToVote;
+import static com.aristurtle.megakalservice.dto.util.VoteConverter.convertToVote;
 
 @RestController
 @RequestMapping("/api/v1")

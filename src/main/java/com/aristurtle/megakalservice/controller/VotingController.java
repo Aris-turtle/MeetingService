@@ -1,11 +1,13 @@
 package com.aristurtle.megakalservice.controller;
 
 import com.aristurtle.megakalservice.dto.VotingDTO;
+import com.aristurtle.megakalservice.dto.util.Views;
 import com.aristurtle.megakalservice.exception.InvalidVotingException;
 import com.aristurtle.megakalservice.exception.VotingNotFoundException;
 import com.aristurtle.megakalservice.model.Voting;
 import com.aristurtle.megakalservice.service.VotingService;
 import com.aristurtle.megakalservice.util.VotingErrorResponse;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,7 @@ public class VotingController {
     }
 
     @PostMapping()
+    @JsonView(Views.CreateVoting.class)
     public ResponseEntity<Long> createVoting(@RequestBody @Valid VotingDTO votingDTO,
                                              BindingResult bindingResult) {
         examineException(bindingResult);
@@ -41,6 +44,7 @@ public class VotingController {
     }
 
     @GetMapping()
+    @JsonView(Views.GetByTgUsername.class)
     public ResponseEntity<List<VotingDTO>> getVotings(@RequestParam String creatorTgUsername) {
         List<Voting> votings = votingService.getVotings(creatorTgUsername);
         if (votings.isEmpty())
@@ -50,6 +54,7 @@ public class VotingController {
     }
 
     @GetMapping("/{id}")
+    @JsonView(Views.GetById.class)
     public ResponseEntity<VotingDTO> getVoting(@PathVariable("id") long id) {
         Optional<Voting> voting = votingService.getVoting(id);
         if (voting.isEmpty())

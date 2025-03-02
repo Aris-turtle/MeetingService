@@ -1,7 +1,9 @@
 package com.aristurtle.megakalservice.controller;
 
 import com.aristurtle.megakalservice.dto.VotingDTO;
+import com.aristurtle.megakalservice.dto.VotingDTOGetById;
 import com.aristurtle.megakalservice.dto.util.Views;
+import com.aristurtle.megakalservice.dto.util.VotingConverter;
 import com.aristurtle.megakalservice.exception.InvalidVotingException;
 import com.aristurtle.megakalservice.exception.VotingNotFoundException;
 import com.aristurtle.megakalservice.model.Voting;
@@ -38,28 +40,27 @@ public class VotingController {
     public ResponseEntity<Long> createVoting(@RequestBody @Valid VotingDTO votingDTO,
                                              BindingResult bindingResult) {
         examineException(bindingResult);
-        final Voting voting = convertToVoting(votingDTO);
+        final Voting voting = VotingConverter.convertToVoting(votingDTO);
         final long id = votingService.save(voting);
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
     @GetMapping()
     @JsonView(Views.GetByTgUsername.class)
-    public ResponseEntity<List<VotingDTO>> getVotings(@RequestParam String creatorTgUsername) {
+    public ResponseEntity<List<VotingDTO>> getVotingsByCreatorTgUsername(@RequestParam String creatorTgUsername) {
         List<Voting> votings = votingService.getVotings(creatorTgUsername);
         if (votings.isEmpty())
             throw new VotingNotFoundException("Does not found Votings for user=" + creatorTgUsername);
-        final List<VotingDTO> responseList = votings.stream().map(this::convertToVotingDTO).collect(Collectors.toList());
+        final List<VotingDTO> responseList = votings.stream().map(VotingConverter::convertToVotingDTO).collect(Collectors.toList());
         return ResponseEntity.ok(responseList);
     }
 
     @GetMapping("/{id}")
-    @JsonView(Views.GetById.class)
-    public ResponseEntity<VotingDTO> getVoting(@PathVariable("id") long id) {
+    public ResponseEntity<VotingDTOGetById> getVotingById(@PathVariable("id") long id) {
         Optional<Voting> voting = votingService.getVoting(id);
         if (voting.isEmpty())
             throw new VotingNotFoundException("Does not found Voting with id=" + id);
-        final VotingDTO votingDTO = convertToVotingDTO(voting.get());
+        final VotingDTOGetById votingDTO = VotingConverter.convertToVotingDTOForGETById(voting.get());
         return ResponseEntity.ok(votingDTO);
     }
 
@@ -73,13 +74,7 @@ public class VotingController {
         }
     }
 
-    private Voting convertToVoting(VotingDTO votingDTO) {
-        return modelMapper.map(votingDTO, Voting.class);
-    }
 
-    private VotingDTO convertToVotingDTO(Voting voting) {
-        return modelMapper.map(voting, VotingDTO.class);
-    }
 
     @ExceptionHandler
     private ResponseEntity<VotingErrorResponse> handleException(InvalidVotingException e) {

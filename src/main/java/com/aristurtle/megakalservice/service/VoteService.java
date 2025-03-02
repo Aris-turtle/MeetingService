@@ -39,4 +39,12 @@ public class VoteService {
         final List<Vote> savedVotes = voteRepository.saveAll(vote);
         return savedVotes.stream().map(Vote::getId).toList();
     }
+
+    public List<Vote> findByVotingId(long votingId) {
+        return voteRepository.findByVotingId(votingId);
+    }
+
+    public List<Vote> findByVotingIdAndVoterTgUsername(long votingId, String voterTgUsername) {
+        return voteRepository.findByVotingIdAndVoterTgUsername(votingId, voterTgUsername);
+    }
 }

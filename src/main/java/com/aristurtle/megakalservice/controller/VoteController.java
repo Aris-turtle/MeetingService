@@ -4,8 +4,10 @@ import com.aristurtle.megakalservice.dto.VoteDTO;
 import com.aristurtle.megakalservice.exception.InvalidVoteException;
 import com.aristurtle.megakalservice.exception.InvalidVotingException;
 import com.aristurtle.megakalservice.exception.VoteNotFoundException;
+import com.aristurtle.megakalservice.exception.VotingNotFoundException;
 import com.aristurtle.megakalservice.model.Vote;
 import com.aristurtle.megakalservice.service.VoteService;
+import com.aristurtle.megakalservice.service.VotingService;
 import com.aristurtle.megakalservice.util.VoteErrorResponse;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -19,26 +21,47 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.aristurtle.megakalservice.dto.util.VoteConverter.convertToVote;
+import static com.aristurtle.megakalservice.dto.util.VoteConverter.convertToVoteDTOList;
 
 @RestController
 @RequestMapping("/api/v1")
 public class VoteController {
     private final VoteService voteService;
+    private final VotingService votingService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public VoteController(VoteService voteService, ModelMapper modelMapper) {
+    public VoteController(VoteService voteService, VotingService votingService, ModelMapper modelMapper) {
         this.voteService = voteService;
+        this.votingService = votingService;
         this.modelMapper = modelMapper;
     }
 
-    @PostMapping("/votings/{id}/votes")
-    ResponseEntity<List<Long>> addVote(@PathVariable("id") long votingId, @RequestBody @Valid VoteDTO voteDTO,
-                                       BindingResult bindingResult) {
+    @PostMapping("/votings/{voting_id}/votes")
+    public ResponseEntity<List<Long>> addVote(@PathVariable("voting_id") long votingId, @RequestBody @Valid VoteDTO voteDTO,
+                                              BindingResult bindingResult) {
         examineException(bindingResult);
         final List<Vote> votes = convertToVote(voteDTO);
         List<Long> ids = voteService.saveAll(votes, votingId);
         return new ResponseEntity<>(ids, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/votings/{voting_id}/votes")
+    public ResponseEntity<List<VoteDTO>> getVotes(@PathVariable("voting_id") long votingId) {
+        if (votingService.getVoting(votingId).isEmpty())
+            throw new VotingNotFoundException("Does not found Voting with id=" + votingId);
+        final List<Vote> votes = voteService.findByVotingId(votingId);
+        return ResponseEntity.ok(convertToVoteDTOList(votes));
+    }
+
+    @GetMapping("/votings/{voting_id}/votes/{voter_tg_username}")
+    public ResponseEntity<List<Long>> getVotes(@PathVariable("voting_id") long votingId,
+                                                  @PathVariable("voter_tg_username") String voterTgUsername) {
+        final List<Vote> votes = voteService.findByVotingIdAndVoterTgUsername(votingId, voterTgUsername);
+        if (votes.isEmpty())
+            throw new VoteNotFoundException("Does not found Votes with parameters: voting_id=" + votingId + ", voter_tg_username=" + voterTgUsername);
+        final List<Long> marks = votes.stream().map(v -> v.getMarkedDate().getTimeInMillis()).toList();
+        return ResponseEntity.ok(marks);
     }
 
     private void examineException(BindingResult bindingResult) {

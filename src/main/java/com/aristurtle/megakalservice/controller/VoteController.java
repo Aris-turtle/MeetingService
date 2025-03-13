@@ -28,13 +28,11 @@ import static com.aristurtle.megakalservice.dto.util.VoteConverter.convertToVote
 public class VoteController {
     private final VoteService voteService;
     private final VotingService votingService;
-    private final ModelMapper modelMapper;
 
     @Autowired
-    public VoteController(VoteService voteService, VotingService votingService, ModelMapper modelMapper) {
+    public VoteController(VoteService voteService, VotingService votingService) {
         this.voteService = voteService;
         this.votingService = votingService;
-        this.modelMapper = modelMapper;
     }
 
     @PostMapping("/votings/{voting_id}/votes")
@@ -56,13 +54,24 @@ public class VoteController {
 
     @GetMapping("/votings/{voting_id}/votes/{voter_tg_username}")
     public ResponseEntity<List<Long>> getVotes(@PathVariable("voting_id") long votingId,
-                                                  @PathVariable("voter_tg_username") String voterTgUsername) {
+                                               @PathVariable("voter_tg_username") String voterTgUsername) {
         final List<Vote> votes = voteService.findByVotingIdAndVoterTgUsername(votingId, voterTgUsername);
         if (votes.isEmpty())
             throw new VoteNotFoundException("Does not found Votes with parameters: voting_id=" + votingId + ", voter_tg_username=" + voterTgUsername);
         final List<Long> marks = votes.stream().map(v -> v.getMarkedDate().getTimeInMillis()).toList();
         return ResponseEntity.ok(marks);
     }
+
+//    @PutMapping("/votings/{voting_id}/votes/{voter_tg_username}")
+//    public ResponseEntity<List<Long>> updateVote(@PathVariable("voting_id") long votingId,
+//                                                 @PathVariable("voter_tg_username") String voterTgUsername,
+//                                                 @RequestBody List<Long> newMarks) {
+//        final List<Vote> votes = voteService.findByVotingIdAndVoterTgUsername(votingId, voterTgUsername);
+//        if (votes.isEmpty())
+//            throw new VoteNotFoundException("Does not found Votes with parameters: voting_id=" + votingId + ", voter_tg_username=" + voterTgUsername);
+//        List<Long> updatedMarksIds = voteService.updateMarks(votingId, voterTgUsername, newMarks);
+//        return ngew ResponseEntity<>(updatedMarksIds, HttpStatus.OK);
+//    }
 
     private void examineException(BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

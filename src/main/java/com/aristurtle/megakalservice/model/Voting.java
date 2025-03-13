@@ -3,6 +3,7 @@ package com.aristurtle.megakalservice.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Calendar;
 import java.util.List;
 
 @Entity(name = "votings")
@@ -25,4 +26,8 @@ public class Voting {
 
     @OneToMany(mappedBy = "voting", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Vote> votes;
+
+    @Column(name = "dates_to_choose")
+    @Temporal(TemporalType.TIMESTAMP)
+    private List<Calendar> dateToChoose;
 }

@@ -40,6 +40,12 @@ public class VoteService {
         return savedVotes.stream().map(Vote::getId).toList();
     }
 
+//    @Transactional
+//    public List<Long> updateMarks(long votingId, String voterTgUsername, List<Long> newMarks) {
+//        List<Vote> votes = findByVotingIdAndVoterTgUsername(votingId, voterTgUsername);
+//        return voteRepository.save();
+//    }
+
     public List<Vote> findByVotingId(long votingId) {
         return voteRepository.findByVotingId(votingId);
     }

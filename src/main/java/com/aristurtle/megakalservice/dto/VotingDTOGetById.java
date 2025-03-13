@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
+import java.util.Calendar;
 import java.util.List;
 
 @Setter
@@ -22,4 +23,6 @@ public class VotingDTOGetById {
     private String creatorTgUsername;
 
     private List<VoteDTO> votes;
+
+    private List<Calendar> dateToChoose;
 }

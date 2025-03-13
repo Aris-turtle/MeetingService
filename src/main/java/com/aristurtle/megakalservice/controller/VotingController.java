@@ -74,8 +74,6 @@ public class VotingController {
         }
     }
 
-
-
     @ExceptionHandler
     private ResponseEntity<VotingErrorResponse> handleException(InvalidVotingException e) {
         final VotingErrorResponse votingErrorResponse = new VotingErrorResponse(e.getMessage(), System.currentTimeMillis());

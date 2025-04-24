@@ -1,2 +1,1 @@
-# MegaKal
 Time choosing service
